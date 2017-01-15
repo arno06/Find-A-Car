@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Find a Car</string>
+    <string name="item_default_title">Model and band</string>
+    <string name="item_default_price">99999€</string>
+    <string name="item_default_source">SourceName</string>
+    <string name="loading">Chargement&#8230;</string>
+    <string name="about">About</string>
+    <string name="settings">Settings</string>
+    <string name="about_arnaud_nicolas">"Find A Car" is an Android application presenting offers related to the sale of Lotus Elise in France.</string>
+</resources>
