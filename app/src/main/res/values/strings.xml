@@ -7,4 +7,5 @@
     <string name="about">About</string>
     <string name="settings">Settings</string>
     <string name="about_arnaud_nicolas">"Find A Car" is an Android application presenting offers related to the sale of Lotus Elise in France.</string>
+    <string name="settings_maxprice">Maximum Price</string>
 </resources>

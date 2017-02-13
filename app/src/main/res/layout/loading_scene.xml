@@ -29,5 +29,5 @@
             android:text="@string/loading"
             android:textAlignment="center"
             android:layout_marginTop="15dp"
-            android:textSize="12dp"/>
+            android:textSize="12sp"/>
 </LinearLayout>

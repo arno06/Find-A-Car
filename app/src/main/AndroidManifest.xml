@@ -17,5 +17,6 @@
         </activity>
         <activity android:name=".activity.FullscreenActivity"/>
         <activity android:name=".activity.AboutActivity"/>
+        <activity android:name=".activity.PreferencesActivity"/>
     </application>
 </manifest>

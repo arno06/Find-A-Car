@@ -1,9 +1,10 @@
 package fr.arnaud_nicolas.findacar;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,13 +21,12 @@ import android.view.ViewGroup;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 
 import fr.arnaud_nicolas.findacar.activity.AboutActivity;
+import fr.arnaud_nicolas.findacar.activity.PreferencesActivity;
 import fr.arnaud_nicolas.findacar.tools.Loader;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import fr.arnaud_nicolas.findacar.adapters.OfferAdapter;
 import fr.arnaud_nicolas.findacar.data.Offer;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener
 {
     public static final String URL_FIND = "https://api.arnaud-nicolas.fr/fac/find?model=Lotus%20Elise";
     public static final String URL_IMAGE = "https://api.arnaud-nicolas.fr/fac/image/";
@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
         refreshData();
     }
 
@@ -63,10 +64,15 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
         switch(item.getItemId())
         {
             case R.id.item_about:
-                Intent intent = new Intent(this, AboutActivity.class);
+                intent = new Intent(this, AboutActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.item_settings:
+                intent = new Intent(this, PreferencesActivity.class);
                 startActivity(intent);
                 return true;
         }
@@ -145,23 +151,38 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<Offer> getDataSet(String pResult)
     {
         ArrayList<Offer> d = new ArrayList<>();
-
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        int max_price = Integer.parseInt(pref.getString("max_price_preference", "100000"));
         try
         {
             JSONObject json = new JSONObject(pResult);
             JSONArray offers = json.getJSONArray("offers");
 
             JSONObject offer;
+            int price;
             for(int i = 0, max = offers.length(); i<max; i++)
             {
                 offer = offers.getJSONObject(i);
+                price = Integer.parseInt(offer.getString("price"));
+                if(price > max_price)
+                    continue;
                 d.add(i, new Offer(offer.getString("title"), offer.getString("price"), offer.getString("image"), offer.getString("source"), offer.getString("sourceColor"), offer.getString("offerURL")));
             }
-
-        }catch(final JSONException e)
+        }
+        catch(final JSONException e)
         {
             return null;
         }
         return d;
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        switch(key)
+        {
+            case "max_price_preference":
+                refreshData();
+                break;
+        }
     }
 }
