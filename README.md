@@ -1,3 +1,8 @@
-![Find a car](https://raw.githubusercontent.com/arno06/Find-A-Car/master/app/src/main/res/mipmap-hdpi/ic_launcher.png)
-# Find-A-Car 
-A first Android project
+# find_a_car
+
+A new Flutter project.
+
+## Getting Started
+
+For help getting started with Flutter, view our online
+[documentation](https://flutter.io/).
