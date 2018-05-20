@@ -1,4 +1,4 @@
-package com.example.findacar;
+package fr.arnaud_nicolas.findacar;
 
 import android.os.Bundle;
 
