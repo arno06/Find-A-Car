@@ -1,8 +1,3 @@
-# find_a_car
+# Find a Car
 
-A new Flutter project.
-
-## Getting Started
-
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+A flutter implementation of a simple app aggregating car offers
