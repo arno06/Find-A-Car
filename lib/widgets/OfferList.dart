@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/animation.dart';
 import 'package:http/http.dart' as http;
 import 'package:find_a_car/providers/Offers.dart';
 import 'OfferDetails.dart';
+import 'AnimatedIntro.dart';
 
 class OfferList extends StatefulWidget{
   OfferList({Key key}):super(key:key);
@@ -10,29 +12,14 @@ class OfferList extends StatefulWidget{
   _OfferListState createState()=>new _OfferListState();
 }
 
-class _OfferListState extends State<OfferList>{
+class _OfferListState extends State<OfferList> with SingleTickerProviderStateMixin{
 
   static const SEARCH_URL = 'https://api.arnaud-nicolas.fr/fac/find?model=Lotus%20Elise';
 
   bool loaded = false;
   List<Offer> list;
-
-  Widget buildLoadingState(BuildContext context){
-    return new Center(
-      child:new Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          new Container(
-            padding:const EdgeInsets.only(bottom: 20.0),
-            child: new CircularProgressIndicator(
-              backgroundColor: Colors.green,
-            ),
-          ),
-          new Text("Chargement...")
-        ],
-      )
-    );
-  }
+  AnimationController controller;
+  Animation<double> animation;
 
   Widget buildListState(BuildContext context){
     List<Widget> items = [];
@@ -88,18 +75,34 @@ class _OfferListState extends State<OfferList>{
     return new ListView(children: items,);
   }
 
+  initState(){
+    super.initState();
+    controller = new AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
+    animation = new Tween(begin:0.0, end: 1.0).animate(controller)
+      ..addStatusListener((state){
+      if(state == AnimationStatus.completed){
+        setState(() {
+          loaded = true;
+        });
+      }
+    });
+  }
+
   init() async{
     http.get(SEARCH_URL).then((response){
       list = Offers.fromJson(response.body);
-      setState(() {
-        loaded = true;
-      });
+      controller.forward();
     });
+  }
+
+  dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    Widget body = loaded?buildListState(context):buildLoadingState(context);
+    Widget body = loaded?buildListState(context):new AnimatedIntro(animation:animation);
     if(!loaded)
       init();
     return new Scaffold(

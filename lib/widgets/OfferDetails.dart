@@ -1,6 +1,8 @@
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:flutter/animation.dart';
 import 'package:find_a_car/providers/Offers.dart';
+import 'AnimatedIntro.dart';
 
 class OfferDetails extends StatefulWidget{
 
@@ -12,13 +14,28 @@ class OfferDetails extends StatefulWidget{
   _OfferDetailsState createState()=>new _OfferDetailsState(this.offer);
 }
 
-class _OfferDetailsState extends State<OfferDetails>{
+class _OfferDetailsState extends State<OfferDetails> with TickerProviderStateMixin{
 
   static const DETAILS_URL = 'https://api.arnaud-nicolas.fr/fac/details/';
 
   _OfferDetailsState(this.offer);
 
   Offer offer;
+  AnimationController controller;
+  Animation<double> animation;
+
+  initState(){
+    super.initState();
+    controller = new AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
+    animation = new Tween(begin:0.0, end: 1.0).animate(controller)
+      ..addStatusListener((state){
+        if(state == AnimationStatus.completed){
+          setState(() {
+            offer.completed = true;
+          });
+        }
+      });
+  }
 
   Widget _buildDetailsState(){
     List<Widget> widgets = [];
@@ -76,35 +93,16 @@ class _OfferDetailsState extends State<OfferDetails>{
 
   }
 
-  Widget _buildLoadingState(){
-    return new Center(
-        child:new Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            new Container(
-              padding:const EdgeInsets.only(bottom: 20.0),
-              child: new CircularProgressIndicator(
-                backgroundColor: Colors.green,
-              ),
-            ),
-            new Text("Chargement...")
-          ],
-        )
-    );
-  }
-
   void loadDetails(){
-    print(DETAILS_URL+this.offer.base64Url);
     http.get(DETAILS_URL+this.offer.base64Url).then((pResponse){
-      this.setState((){
-        this.offer.completeFromJson(pResponse.body);
-      });
+      controller.forward();
+      this.offer.completeFromJson(pResponse.body);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    Widget body = offer.completed?_buildDetailsState():_buildLoadingState();
+    Widget body = offer.completed?_buildDetailsState():new AnimatedIntro(animation:animation);
     if(!offer.completed)
       loadDetails();
     return new Scaffold(

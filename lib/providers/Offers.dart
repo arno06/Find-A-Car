@@ -30,7 +30,6 @@ class Offer{
     this.date = data['offerDate'];
     this.year = data['year'];
     this.mileage = data['mileage'];
-    this.completed = true;
   }
 
   String get base64Url=>base64.encode(utf8.encode(this.url));
