@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/animation.dart';
 import 'package:http/http.dart' as http;
+import 'package:transparent_image/transparent_image.dart';
 import 'package:find_a_car/providers/Offers.dart';
 import 'OfferDetails.dart';
 import 'AnimatedIntro.dart';
@@ -37,7 +38,7 @@ class _OfferListState extends State<OfferList> with SingleTickerProviderStateMix
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             new Container(
-              child: new Image.network(offer.preview, width: 100.0, height:80.0),
+              child: new FadeInImage.memoryNetwork(placeholder: kTransparentImage, image: offer.preview, width: 100.0, height: 80.0,)
             ),
             new Expanded(
                 child: new Container(
@@ -77,7 +78,7 @@ class _OfferListState extends State<OfferList> with SingleTickerProviderStateMix
 
   initState(){
     super.initState();
-    controller = new AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
+    controller = new AnimationController(vsync: this, duration: const Duration(milliseconds: 450));
     animation = new Tween(begin:0.0, end: 1.0).animate(controller)
       ..addStatusListener((state){
       if(state == AnimationStatus.completed){

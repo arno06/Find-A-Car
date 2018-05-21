@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/animation.dart';
 import 'package:find_a_car/providers/Offers.dart';
 import 'AnimatedIntro.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class OfferDetails extends StatefulWidget{
 
@@ -26,7 +27,7 @@ class _OfferDetailsState extends State<OfferDetails> with TickerProviderStateMix
 
   initState(){
     super.initState();
-    controller = new AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
+    controller = new AnimationController(vsync: this, duration: const Duration(milliseconds: 450));
     animation = new Tween(begin:0.0, end: 1.0).animate(controller)
       ..addStatusListener((state){
         if(state == AnimationStatus.completed){
@@ -40,7 +41,9 @@ class _OfferDetailsState extends State<OfferDetails> with TickerProviderStateMix
   Widget _buildDetailsState(){
     List<Widget> widgets = [];
     for(var image in offer.images){
-      widgets.add(new Image.network(image, height: 350.0,));
+      widgets.add(
+        new FadeInImage.memoryNetwork(placeholder: kTransparentImage, image: image, height: 350.0,)
+      );
     }
     return new Column(
       crossAxisAlignment: CrossAxisAlignment.start,
